@@ -2,7 +2,7 @@
 
 ## Project
 
-> [Kakao Clone](https://borb-choi.github.io/kakao_clone)
-~~~
-  HTML, CSS 
-~~~
+   > [Kakao Clone](https://borb-choi.github.io/kakao_clone)
+   ~~~
+   HTML, CSS 
+   ~~~
