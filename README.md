@@ -2,4 +2,4 @@
 
 ## Project
 
-  > Kakao Clone](https://borb-choi.github.io/kakao_clone)
+  > [Kakao Clone](https://borb-choi.github.io/kakao_clone)
