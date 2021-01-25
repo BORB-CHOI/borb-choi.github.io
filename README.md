@@ -6,3 +6,7 @@
    ~~~
    HTML, CSS 
    ~~~
+   > [JavaScript Theory](https://borb-choi.github.io/JavaScript_theory/)
+   ~~~
+   HTML, CSS, JavaScript
+   ~~~
