@@ -21,11 +21,11 @@ const getData = async (url) => {
 
 // fetch options
 const options = {
-  method: "GET",
   headers: {
-    "Content-Type": "application/json",
+    Accept: "application/vnd.github.v3+json",
     "Access-Control-Allow-Origin": "*",
-    username: "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",
+    Authorization: "token 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",
+    "Content-Type": "application/json",
   },
 };
 
@@ -44,7 +44,6 @@ fetch(
         console.log(response);
       });
     });
-
     // const test = regexSearch(json[0].name, "^(.*)$");
   })
   .then((data) => {
