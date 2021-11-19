@@ -39,7 +39,7 @@ const getLicenseList = async () => {
     method: "GET",
     headers: {
       Accept: "*",
-      Authorization: "token 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",
+      Authorization: "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",
       "Content-Type": "application/json",
     },
   };
