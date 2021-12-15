@@ -9,7 +9,11 @@
    ~~~
    HTML, CSS, JavaScript
    ~~~
-   
+   > [Please pick me](https://borb-choi.github.io/pickme/)
+   ~~~
+   Pug, SCSS, JavaScript, TypeScript
+   ~~~
+
 ## Function
 - [x] Comments
 - [x] Favicon 
