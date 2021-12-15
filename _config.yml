@@ -103,7 +103,7 @@ analytics:
 # Site Author
 author:
   name             : "BORB"
-  avatar           : "/assets/images/bio-photo.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  avatar           : "/assets/images/profile-photo.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "I am an **awesome** person."
   location         : "Republic of Korea"
   email            :
@@ -114,6 +114,9 @@ author:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/BORB-CHOI"
+    - label: "LinkedIn"
+      icon: "fab fa-fw fa-linkedin"
+      url: "https://www.linkedin.com/in/%EB%B9%84%EC%84%B1-%EC%B5%9C-a61b30215/"
     - label: "Website"
       icon: "fas fa-fw fa-link"
       url: "https://biorb.tistory.com/"
@@ -130,24 +133,15 @@ author:
 # Site Footer
 footer:
   links:
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      # url:
-    - label: "Facebook"
-      icon: "fab fa-fw fa-facebook-square"
-      # url:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      # url:
-    - label: "GitLab"
-      icon: "fab fa-fw fa-gitlab"
-      # url:
-    - label: "Bitbucket"
-      icon: "fab fa-fw fa-bitbucket"
-      # url:
+      url: "https://github.com/BORB-CHOI"
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
-      # url:
+      url: "https://github.com/BORB-CHOI"
+    - label: "LinkedIn"
+      icon: "fab fa-fw fa-linkedin"
+      url: "https://www.linkedin.com/in/%EB%B9%84%EC%84%B1-%EC%B5%9C-a61b30215/"
 
 
 # Reading Files
@@ -179,8 +173,6 @@ exclude:
   - Rakefile
   - README
   - tmp
-  - /docs # ignore Minimal Mistakes /docs
-  - /test # ignore Minimal Mistakes /test
 keep_files:
   - .git
   - .svn
@@ -295,3 +287,12 @@ defaults:
     values:
       layout: single
       author_profile: true
+
+jekyll_admin:
+  hidden_links:
+    - posts
+    - pages
+    - staticfiles
+    - datafiles
+    - configuration
+  homepage: "pages"
