@@ -1604,6 +1604,15 @@
     var scrollEl=document.getElementById('scroll-container');
     var secEls=document.querySelectorAll('.section');
     var totalSecs=secEls.length, curIdx=0;
+    var mouseNX = 0, mouseNY = 0;
+    var camMouseTarget = new THREE.Vector2(0, 0);
+    var camMouseCurrent = new THREE.Vector2(0, 0);
+
+    window.addEventListener('mousemove', function (e) {
+      mouseNX = (e.clientX / window.innerWidth - 0.5);
+      mouseNY = (e.clientY / window.innerHeight - 0.5);
+    });
+
     var dotsEl=document.getElementById('progress-dots');
     for (var i=0;i<totalSecs;i++) {
       var d=document.createElement('div'); d.classList.add('dot');
@@ -1723,6 +1732,16 @@
       camera.position.lerp(targetCamPos, camLerpAmt);
       currentLook.lerp(targetLookAt, lookLerpAmt);
       camera.lookAt(currentLook);
+
+      var camFactorX = (curIdx === 0 ? 0.42 : 0.24);
+      var camFactorY = (curIdx === 0 ? 0.22 : 0.14);
+      camMouseTarget.set(mouseNX * camFactorX, -mouseNY * camFactorY);
+      camMouseCurrent.lerp(camMouseTarget, 0.065);
+      camMouseCurrent.x = Math.max(-0.75, Math.min(0.75, camMouseCurrent.x));
+      camMouseCurrent.y = Math.max(-0.55, Math.min(0.55, camMouseCurrent.y));
+
+      camera.position.x += camMouseCurrent.x;
+      camera.position.y += camMouseCurrent.y;
       camera.position.x+=Math.sin(t*0.16)*0.008;
       camera.position.y+=Math.cos(t*0.12)*0.005;
       renderer.render(scene,camera);
@@ -1745,6 +1764,7 @@
         hasRevealed = true;
         if (loading) loading.classList.add('hidden');
         document.body.classList.add('intro-revealed');
+        window.dispatchEvent(new Event('introRevealed'));
 
         camera.position.z += 26;
         camera.position.y += 2.8;
@@ -1964,8 +1984,8 @@
       function onMouseMove(e) {
         var nx = (e.clientX / window.innerWidth - 0.5);
         var ny = (e.clientY / window.innerHeight - 0.5);
-        parallaxX = nx * 6;
-        parallaxY = ny * 4;
+        parallaxX = nx * 25;
+        parallaxY = ny * 15;
       }
       window.addEventListener('mousemove', onMouseMove);
 
@@ -1987,31 +2007,39 @@
       }
 
       function syncWithHeroSection() {
+        if (typeof syncWithHeroSection.wasVisible === 'undefined') {
+          syncWithHeroSection.wasVisible = false;
+        }
+
         var ready = document.body.classList.contains('intro-revealed');
         if (!ready) {
           gsap.killTweensOf(allChars);
           gsap.set(allChars, { yPercent: 0, opacity: 1, rotationX: 0, y: 0 });
           stopParallax();
+          syncWithHeroSection.wasVisible = false;
           return;
         }
 
         var heroSec = document.getElementById('s0');
         var visible = heroSec && heroSec.classList.contains('active');
         if (visible) {
-          var introTween = runIntroAll();
-          if (introTween) introTween.eventCallback('onComplete', function(){ startIdleFloat(); });
-          else startIdleFloat();
+          if (!syncWithHeroSection.wasVisible) {
+            var introTween = runIntroAll();
+            if (introTween) introTween.eventCallback('onComplete', function () { startIdleFloat(); });
+            else startIdleFloat();
+          }
           if (!parallaxRAF) parallaxTick();
+          syncWithHeroSection.wasVisible = true;
         } else {
           gsap.killTweensOf(allChars);
           gsap.set(allChars, { yPercent: 0, opacity: 1, rotationX: 0, y: 0 });
           stopParallax();
+          syncWithHeroSection.wasVisible = false;
         }
       }
 
       syncWithHeroSection();
-      var bodyWatcher = new MutationObserver(syncWithHeroSection);
-      bodyWatcher.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+      window.addEventListener('introRevealed', syncWithHeroSection);
       var secWatcher = new MutationObserver(syncWithHeroSection);
       document.querySelectorAll('.section').forEach(function(s){ secWatcher.observe(s, { attributes: true, attributeFilter: ['class'] }); });
     })();
