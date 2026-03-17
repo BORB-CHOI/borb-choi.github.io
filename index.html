@@ -1924,26 +1924,26 @@
         gsap.killTweensOf(allChars);
         var intro = gsap.timeline();
 
-        items.forEach(function(item, idx){
-          intro.fromTo(item.chars, {
-            yPercent: 118,
-            opacity: 0,
-            rotationX: 45
-          }, {
-            yPercent: 0,
-            opacity: 1,
-            rotationX: 0,
-            duration: item.el.classList.contains('hero-name') ? 1.05 : 0.82,
-            ease: 'power4.out',
-            stagger: { each: item.el.classList.contains('hero-name') ? 0.026 : 0.008, from: 'start' }
-          }, idx===0 ? 0 : '>-0.14');
+        intro.fromTo(allChars, {
+          yPercent: 118,
+          opacity: 0,
+          rotationX: 45
+        }, {
+          yPercent: 0,
+          opacity: 1,
+          rotationX: 0,
+          duration: 0.78,
+          ease: 'power4.out',
+          stagger: { each: 0.004, from: 'start' }
+        }, 0);
 
-          intro.add(function(){
+        intro.add(function () {
+          items.forEach(function (item) {
             item.el.classList.remove('sweep');
             void item.el.offsetWidth;
             item.el.classList.add('sweep');
-          }, idx===0 ? 0.05 : '>-0.02');
-        });
+          });
+        }, 0.03);
 
         return intro;
       }
