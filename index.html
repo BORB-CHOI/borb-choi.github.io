@@ -1846,33 +1846,116 @@
     document.addEventListener('mousedown',function(){ document.body.classList.add('clicking'); });
     document.addEventListener('mouseup',  function(){ document.body.classList.remove('clicking'); });
 
-    // Click shockwave + sparks
-    document.addEventListener('click',function(e){
-      ['','s2','s3'].forEach(function(cls){
+    function spawnShockwaves(x, y) {
+      ['', 's2', 's3'].forEach(function(cls){
         var sw=document.createElement('div');
         sw.className='shockwave'+(cls?' '+cls:'');
-        sw.style.left=e.clientX+'px'; sw.style.top=e.clientY+'px';
+        sw.style.left=x+'px'; sw.style.top=y+'px';
         document.body.appendChild(sw);
         setTimeout(function(){sw.remove();},900);
       });
-      for (var i=0;i<14;i++) {
+    }
+
+    function spawnSparks(x, y, count, speedMin, speedMax, durationMin, durationMax) {
+      for (var i=0;i<count;i++) {
         (function(ii){
           var sp=document.createElement('div');
           sp.className='spark';
-          var angle=(ii/14)*Math.PI*2, speed=40+Math.random()*80;
+          var angle=(ii/count)*Math.PI*2 + (Math.random()-0.5)*0.22;
+          var speed=speedMin+Math.random()*(speedMax-speedMin);
           var tx=Math.cos(angle)*speed, ty=Math.sin(angle)*speed;
           var sz=2+Math.random()*4;
-          sp.style.left=e.clientX+'px'; sp.style.top=e.clientY+'px';
+          sp.style.left=x+'px'; sp.style.top=y+'px';
           sp.style.width=sz+'px'; sp.style.height=sz+'px';
-          sp.style.background='hsl('+(20+Math.random()*30)+',100%,'+(55+Math.random()*25)+'%)';
+          sp.style.background='hsl('+(16+Math.random()*36)+',100%,'+(54+Math.random()*26)+'%)';
           document.body.appendChild(sp);
           sp.animate([
-            {transform:'translate(-50%,-50%)',opacity:1},
-            {transform:'translate(calc(-50% + '+tx+'px),calc(-50% + '+ty+'px))',opacity:0}
-          ],{duration:500+Math.random()*300,easing:'ease-out',fill:'forwards'}).onfinish=function(){sp.remove();};
+            {transform:'translate(-50%,-50%) scale(1)',opacity:1},
+            {transform:'translate(calc(-50% + '+tx+'px),calc(-50% + '+ty+'px)) scale(0.7)',opacity:0}
+          ],{duration:durationMin+Math.random()*(durationMax-durationMin),easing:'ease-out',fill:'forwards'}).onfinish=function(){sp.remove();};
         })(i);
       }
+    }
+
+    function triggerFirework(x, y, options) {
+      var opts = options || {};
+      var sparkCount = typeof opts.sparkCount === 'number' ? opts.sparkCount : 14;
+      var useShockwave = opts.useShockwave !== false;
+      if (useShockwave) spawnShockwaves(x, y);
+      spawnSparks(x, y, sparkCount, 40, 120, 500, 820);
+      if (opts.ringBurst) {
+        setTimeout(function(){ spawnSparks(x, y, Math.max(10, Math.floor(sparkCount * 0.75)), 28, 86, 420, 720); }, 120);
+      }
+    }
+
+    // Click shockwave + sparks
+    document.addEventListener('click',function(e){
+      triggerFirework(e.clientX, e.clientY, { sparkCount: 14, useShockwave: true, ringBurst: false });
     });
+
+    // Final chapter auto fireworks
+    var finalSection = document.getElementById('s7');
+    var finalFireworksTimers = [null, null];
+    var FINAL_FIREWORK_BASE_INTERVALS = [860, 1280];
+
+    function getNextFinalFireworkDelay(streamIndex) {
+      var base = FINAL_FIREWORK_BASE_INTERVALS[streamIndex] || 920;
+      return Math.round(base * (0.5 + Math.random() * 1.0));
+    }
+
+    function runFinalChapterFireworks(streamIndex) {
+      if (!finalSection || !finalSection.classList.contains('active')) return;
+      var x = window.innerWidth * (0.16 + Math.random() * 0.68);
+      var y = window.innerHeight * (0.14 + Math.random() * 0.62);
+      var isPrimary = streamIndex === 0;
+      triggerFirework(x, y, {
+        sparkCount: (isPrimary ? 18 : 16) + Math.floor(Math.random() * (isPrimary ? 7 : 6)),
+        useShockwave: Math.random() > (isPrimary ? 0.32 : 0.48),
+        ringBurst: true
+      });
+    }
+
+    function scheduleFinalChapterFireworks(streamIndex) {
+      if (!finalSection || !finalSection.classList.contains('active')) {
+        finalFireworksTimers[streamIndex] = null;
+        return;
+      }
+      runFinalChapterFireworks(streamIndex);
+      finalFireworksTimers[streamIndex] = setTimeout(function(){
+        scheduleFinalChapterFireworks(streamIndex);
+      }, getNextFinalFireworkDelay(streamIndex));
+    }
+
+    function setFinalFireworksEnabled(enabled) {
+      if (enabled) {
+        if (!finalFireworksTimers[0]) {
+          finalFireworksTimers[0] = setTimeout(function(){
+            finalFireworksTimers[0] = null;
+            scheduleFinalChapterFireworks(0);
+          }, 40 + Math.floor(Math.random() * 140));
+        }
+        if (!finalFireworksTimers[1]) {
+          finalFireworksTimers[1] = setTimeout(function(){
+            finalFireworksTimers[1] = null;
+            scheduleFinalChapterFireworks(1);
+          }, 360 + Math.floor(Math.random() * 260));
+        }
+        return;
+      }
+      [0,1].forEach(function(i){
+        if (!finalFireworksTimers[i]) return;
+        clearTimeout(finalFireworksTimers[i]);
+        finalFireworksTimers[i] = null;
+      });
+    }
+
+    if (finalSection) {
+      var finalSecObserver = new MutationObserver(function(){
+        setFinalFireworksEnabled(finalSection.classList.contains('active'));
+      });
+      finalSecObserver.observe(finalSection, { attributes: true, attributeFilter: ['class'] });
+      setFinalFireworksEnabled(finalSection.classList.contains('active'));
+    }
 
     // Magnetic buttons
     document.querySelectorAll('.mag-wrap').forEach(function(wrap){
