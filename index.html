@@ -159,7 +159,7 @@
       margin-bottom: 1.1rem;
       opacity: 0;
       transform: translateX(-18px);
-      transition: opacity 0.7s var(--easing), transform 0.7s var(--easing);
+      transition: opacity 0.72s var(--easing), transform 0.72s var(--easing);
     }
 
     /* Chapter heading */
@@ -170,7 +170,7 @@
       margin-bottom: 1.1rem;
       opacity: 0;
       transform: translateY(22px);
-      transition: opacity 0.75s 0.1s var(--easing), transform 0.75s 0.1s var(--easing);
+      transition: opacity 0.72s 0.1s var(--easing), transform 0.72s 0.1s var(--easing);
     }
 
     .divider {
@@ -181,7 +181,7 @@
       opacity: 0;
       transform: scaleX(0);
       transform-origin: left;
-      transition: opacity 0.6s 0.2s, transform 0.6s 0.2s var(--easing);
+      transition: opacity 0.72s 0.2s var(--easing), transform 0.72s 0.2s var(--easing);
     }
 
     /* Chapter body */
@@ -193,7 +193,7 @@
       max-width: 500px;
       opacity: 0;
       transform: translateY(18px);
-      transition: opacity 0.75s 0.25s var(--easing), transform 0.75s 0.25s var(--easing);
+      transition: opacity 0.72s 0.3s var(--easing), transform 0.72s 0.3s var(--easing);
     }
 
     /* ACTIVE STATE - text reveal */
@@ -1510,12 +1510,15 @@
     }
 
     function makePlanet(orbitR, sz, col, emis, tiltDeg) {
-      var mesh=new THREE.Mesh(new THREE.SphereGeometry(sz,32,32),new THREE.MeshPhongMaterial({color:col,emissive:emis,emissiveIntensity:0.22,shininess:40}));
+      var mesh = new THREE.Mesh(new THREE.SphereGeometry(sz, 32, 32), new THREE.MeshPhongMaterial({ color: col, emissive: emis, emissiveIntensity: 0.08, shininess: 40 }));
       mesh.position.set(orbitR,0,0);
       mesh.rotation.z = THREE.MathUtils.degToRad(tiltDeg || 0);
       var grp=new THREE.Group(); grp.add(mesh);
       grp.rotation.y = Math.random() * Math.PI * 2;
-      var glow=makeGlow(col,sz*5.5); glow.position.set(orbitR,0,0); grp.add(glow);
+      var glow = makeGlow(col, sz * 3.2);
+      glow.material.opacity = 0.23;
+      glow.position.set(orbitR, 0, 0);
+      grp.add(glow);
       scene.add(grp); scene.add(makeOrbit(orbitR,col,0.18));
       return {group:grp,mesh:mesh};
     }
@@ -1531,10 +1534,10 @@
 
     var jupGroup=new THREE.Group();
     jupGroup.rotation.y = Math.random() * Math.PI * 2;
-    var jupMesh=new THREE.Mesh(new THREE.SphereGeometry(0.90,32,32),new THREE.MeshPhongMaterial({color:0xddaa77,emissive:0x221100,emissiveIntensity:0.2,shininess:22}));
+    var jupMesh = new THREE.Mesh(new THREE.SphereGeometry(0.90, 32, 32), new THREE.MeshPhongMaterial({ color: 0xddaa77, emissive: 0x221100, emissiveIntensity: 0.07, shininess: 22 }));
     jupMesh.position.set(25,0,0); jupGroup.add(jupMesh);
     jupMesh.rotation.z = THREE.MathUtils.degToRad(3.13);
-    var jg=makeGlow(0xddaa77,7); jg.position.set(25,0,0); jupGroup.add(jg);
+    var jg = makeGlow(0xddaa77, 4.2); jg.material.opacity = 0.2; jg.position.set(25, 0, 0); jupGroup.add(jg);
     scene.add(jupGroup); scene.add(makeOrbit(25,0xddaa77,0.14));
 
     var satGroup=new THREE.Group();
@@ -1544,7 +1547,7 @@
     satTiltGroup.rotation.z = THREE.MathUtils.degToRad(26.73);
     satGroup.add(satTiltGroup);
 
-    var satMesh=new THREE.Mesh(new THREE.SphereGeometry(0.76,32,32),new THREE.MeshPhongMaterial({color:0xeedd99,emissive:0x332200,emissiveIntensity:0.2,shininess:22}));
+    var satMesh = new THREE.Mesh(new THREE.SphereGeometry(0.76, 32, 32), new THREE.MeshPhongMaterial({ color: 0xeedd99, emissive: 0x332200, emissiveIntensity: 0.07, shininess: 22 }));
     satTiltGroup.add(satMesh);
     var ringI=new THREE.Mesh(new THREE.RingGeometry(1.05,1.65,80),new THREE.MeshBasicMaterial({color:0xddcc99,side:THREE.DoubleSide,transparent:true,opacity:0.55,depthWrite:false}));
     ringI.rotation.x = Math.PI / 2;
@@ -1552,16 +1555,17 @@
     var ringO=new THREE.Mesh(new THREE.RingGeometry(1.70,2.50,80),new THREE.MeshBasicMaterial({color:0xbbaa77,side:THREE.DoubleSide,transparent:true,opacity:0.28,depthWrite:false}));
     ringO.rotation.x = Math.PI / 2;
     satTiltGroup.add(ringO);
-    var sg = makeGlow(0xeedd99, 6);
+    var sg = makeGlow(0xeedd99, 3.8);
+    sg.material.opacity = 0.2;
     satTiltGroup.add(sg);
     scene.add(satGroup); scene.add(makeOrbit(35,0xeedd99,0.11));
 
     var uraGroup = new THREE.Group();
     uraGroup.rotation.y = Math.random() * Math.PI * 2;
-    var uraMesh = new THREE.Mesh(new THREE.SphereGeometry(0.64, 28, 28), new THREE.MeshPhongMaterial({ color: 0x7ed2d7, emissive: 0x082233, emissiveIntensity: 0.22, shininess: 20 }));
+    var uraMesh = new THREE.Mesh(new THREE.SphereGeometry(0.64, 28, 28), new THREE.MeshPhongMaterial({ color: 0x7ed2d7, emissive: 0x082233, emissiveIntensity: 0.07, shininess: 20 }));
     uraMesh.position.set(46, 0, 0); uraGroup.add(uraMesh);
     uraMesh.rotation.z = THREE.MathUtils.degToRad(97.77);
-    var ug = makeGlow(0x7ed2d7, 5.5); ug.position.set(46, 0, 0); uraGroup.add(ug);
+    var ug = makeGlow(0x7ed2d7, 3.4); ug.material.opacity = 0.2; ug.position.set(46, 0, 0); uraGroup.add(ug);
     scene.add(uraGroup); scene.add(makeOrbit(46, 0x7ed2d7, 0.10));
 
     // Asteroid belt (warm dusty)
@@ -1998,13 +2002,16 @@
           tn.parentNode.removeChild(tn);
           return;
         }
+        var chars = Array.from(tn.textContent);
+        var normalizedSpan = 0.2;
+        var denom = Math.max(chars.length - 1, 1);
         var frag=document.createDocumentFragment();
-        Array.from(tn.textContent).forEach(function(ch,i){
+        chars.forEach(function (ch, i) {
           var sp=document.createElement('span');
           sp.className='char';
           if (ch===' ') { sp.innerHTML='\u00a0'; }
           else { sp.textContent=ch; }
-          sp.style.transitionDelay=(0.12+i*0.022)+'s';
+          sp.style.transitionDelay = (0.1 + (i / denom) * normalizedSpan) + 's';
           frag.appendChild(sp);
         });
         tn.parentNode.replaceChild(frag,tn);
@@ -2082,13 +2089,19 @@
 
       function startIdleFloat() {
         gsap.killTweensOf(allChars);
-        gsap.to(allChars, {
-          y: function(i){ return i % 2 ? -1.2 : 1.2; },
-          duration: 2.9,
-          ease: 'sine.inOut',
-          repeat: -1,
-          yoyo: true,
-          stagger: { each: 0.02 }
+        allChars.forEach(function (char) {
+          var dir = Math.random() > 0.5 ? 1 : -1;
+          var amp = 0.65 + Math.random() * 1.85;
+          var dur = 2.15 + Math.random() * 1.75;
+          var delay = Math.random() * 0.9;
+          gsap.to(char, {
+            y: dir * amp,
+            duration: dur,
+            delay: delay,
+            ease: 'sine.inOut',
+            repeat: -1,
+            yoyo: true
+          });
         });
       }
 
