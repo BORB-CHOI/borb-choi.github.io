@@ -649,6 +649,12 @@
       text-shadow: 0 0 20px rgba(255,170,68,0.7), 0 0 38px rgba(255,106,0,0.5);
       animation: chapterStampFinal 1.55s cubic-bezier(0.16, 0.78, 0.2, 1) forwards;
     }
+    #chapter-stamp.play.intro {
+      color: rgba(255,242,214,0.98);
+      text-shadow: 0 0 22px rgba(255,201,128,0.82), 0 0 46px rgba(255,115,0,0.58);
+      letter-spacing: 0.5em;
+      animation: chapterStampIntro 1.8s cubic-bezier(0.16, 0.8, 0.2, 1) forwards;
+    }
 
     @keyframes introFlare {
       0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.06); filter: blur(0px) saturate(1.45); }
@@ -679,6 +685,13 @@
       20%  { opacity: 1; transform: translate(-50%, -50%) scale(1.06); filter: blur(0); }
       60%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
       100% { opacity: 0; transform: translate(-50%, -50%) scale(1.08); filter: blur(1.8px); }
+    }
+    @keyframes chapterStampIntro {
+      0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.72); filter: blur(16px); letter-spacing: 0.62em; }
+      16%  { opacity: 1; transform: translate(-50%, -50%) scale(1.09); filter: blur(0); letter-spacing: 0.50em; }
+      28%  { transform: translate(-50%, -50%) scale(1.02); }
+      62%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.07); filter: blur(2.2px); letter-spacing: 0.44em; }
     }
 
     .ld-title {
@@ -1623,14 +1636,25 @@
     var dotEls=dotsEl.querySelectorAll('.dot');
     var chapterStampPlayed = {};
 
-    function triggerIntroImpact(chapterNumber, useFlare, isFinal) {
+    function triggerIntroImpact(opts) {
+      var chapterNumber = opts && typeof opts.chapterNumber === 'number' ? opts.chapterNumber : null;
+      var useFlare = !!(opts && opts.useFlare);
+      var isFinal = !!(opts && opts.isFinal);
+      var isIntro = !!(opts && opts.isIntro);
+      var customText = opts && opts.customText ? opts.customText : '';
       var stamp = document.getElementById('chapter-stamp');
       if (stamp) {
-        stamp.textContent = (isFinal ? 'FINAL CHAPTER ' : 'CHAPTER ') + String(chapterNumber).padStart(2, '0');
+        if (isIntro && customText) {
+          stamp.textContent = customText;
+        } else {
+          stamp.textContent = (isFinal ? 'FINAL CHAPTER ' : 'CHAPTER ') + String(chapterNumber).padStart(2, '0');
+        }
         stamp.classList.remove('play');
         stamp.classList.remove('final');
+        stamp.classList.remove('intro');
         void stamp.offsetWidth;
         if (isFinal) stamp.classList.add('final');
+        if (isIntro) stamp.classList.add('intro');
         stamp.classList.add('play');
       }
       if (useFlare) {
@@ -1654,10 +1678,10 @@
       setCam(idx);
 
       if (idx >= 1 && idx <= totalSecs - 1) {
-        var chapterNumber = idx + 1;
+        var chapterNumber = idx;
         if (!chapterStampPlayed[chapterNumber]) {
           chapterStampPlayed[chapterNumber] = true;
-          triggerIntroImpact(chapterNumber, false, idx === totalSecs - 1);
+          triggerIntroImpact({ chapterNumber: chapterNumber, useFlare: false, isFinal: idx === totalSecs - 1, isIntro: false });
         }
       }
     }
@@ -1775,7 +1799,12 @@
         if (hasStarted) return;
         hasStarted = true;
 
-        triggerIntroImpact(1, false, false);
+        triggerIntroImpact({
+          customText: 'WELCOME ABOARD',
+          useFlare: false,
+          isFinal: false,
+          isIntro: true
+        });
         setTimeout(revealSite, 80);
       }
 
