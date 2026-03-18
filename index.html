@@ -800,13 +800,13 @@
       overflow: hidden;
       cursor: default;
       opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.6s var(--easing), transform 0.6s var(--easing),
+      transform: translateY(32px);
+      transition: opacity 1.05s cubic-bezier(0.16, 1, 0.3, 1), transform 1.05s cubic-bezier(0.16, 1, 0.3, 1),
                   border-color 0.3s, background 0.3s;
     }
-    .section.active .proj-card:nth-child(1) { opacity:1; transform:translateY(0); transition-delay:0.15s; }
-    .section.active .proj-card:nth-child(2) { opacity:1; transform:translateY(0); transition-delay:0.28s; }
-    .section.active .proj-card:nth-child(3) { opacity:1; transform:translateY(0); transition-delay:0.42s; }
+    .section.active .proj-card:nth-child(1) { opacity:1; transform:translateY(0); transition-delay:0.28s; }
+    .section.active .proj-card:nth-child(2) { opacity:1; transform:translateY(0); transition-delay:0.52s; }
+    .section.active .proj-card:nth-child(3) { opacity:1; transform:translateY(0); transition-delay:0.78s; }
 
     .proj-card:hover { border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.03); }
 
@@ -2158,6 +2158,12 @@
 
     // 3D card tilt
     document.querySelectorAll('.proj-card').forEach(function(card){
+      function clearCardInlineStyles() {
+        card.style.transform = '';
+        card.style.boxShadow = '';
+        card.style.transition = '';
+      }
+
       card.addEventListener('mousemove',function(e){
         var rect=card.getBoundingClientRect();
         var x=(e.clientX-rect.left)/rect.width-0.5, y=(e.clientY-rect.top)/rect.height-0.5;
@@ -2169,7 +2175,18 @@
         card.style.transform='perspective(500px) rotateY(0) rotateX(0) scale(1)';
         card.style.boxShadow='none';
         card.style.transition='transform 0.5s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.5s,border-color 0.3s';
+        setTimeout(function () {
+          if (!card.matches(':hover')) clearCardInlineStyles();
+        }, 560);
       });
+
+      var projectSection = document.getElementById('s-proj');
+      if (projectSection) {
+        var projCardObserver = new MutationObserver(function () {
+          if (!projectSection.classList.contains('active')) clearCardInlineStyles();
+        });
+        projCardObserver.observe(projectSection, { attributes: true, attributeFilter: ['class'] });
+      }
     });
 
     // Ambient floating particles
